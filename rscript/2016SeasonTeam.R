@@ -1,8 +1,13 @@
-# Library
+Library
 library(tidyverse)
 
 # Load data
 load("../data/season2016.rda")
+
+ggplot(data = def, aes(x = Giornata, y = vit, group = team)) + geom_line() + geom_point() + facet_wrap(~team) + coord_polar()
+
+
+
 
 # Plot MURO
 x %>% group_by(team) %>% mutate(cum = cumsum(MURO_Prf.)) %>% ggplot(aes(x = Giornata, y = cum,
