@@ -101,9 +101,37 @@ def$vit[def$vit == FALSE]  <- 0
 def$vit[def$vit == TRUE]  <- 1
 def <- def %>% group_by(team) %>% mutate(cum = cumsum(vit))
 
+################## FIX TABLE ######################
 # Giornata as factor
 def$Giornata <- factor(def$Giornata, levels = c(paste0(rep("Andata_", 13), 1:13), paste0(rep("Ritorno_", 13), 1:13)))
 	
+def <- tbl_df(transform(def, SetGioc. = as.numeric(SetGioc.),
+				  PUNTI_Tot = as.numeric(PUNTI_Tot),
+				  PUNTI_Vin = as.numeric(PUNTI_Vin),
+				  PUNTI_BP = as.numeric(PUNTI_BP),
+				  BATTUTA_Tot = as.numeric(BATTUTA_Tot),
+				  BATTUTA_Ace = as.numeric(BATTUTA_Ace),
+				  BATTUTA_Err. = as.numeric(BATTUTA_Err.),
+				  BATTUTA_AceperSet = as.numeric(gsub(",", ".", def$BATTUTA_AceperSet)),
+				  BATTUTA_Effic. = as.numeric(gsub(",", ".", def$BATTUTA_Effic.)),
+				  RICEZIONE_Tot = as.numeric(RICEZIONE_Tot),
+				  RICEZIONE_Err. = as.numeric(RICEZIONE_Err.),
+				  RICEZIONE_Neg. = as.numeric(RICEZIONE_Neg.),
+				  RICEZIONE_Prf. = as.numeric(gsub(",", ".", def$RICEZIONE_Prf.)),
+				  `RICEZIONE_Prf.%` = as.numeric(gsub(",", ".", def$`RICEZIONE_Prf.%`)),
+				  RICEZIONE_Effic. = as.numeric(gsub(",", ".", def$RICEZIONE_Effic.)),
+				  ATTACCO_Tot = as.numeric(ATTACCO_Tot),
+				  ATTACCO_Err. = as.numeric(ATTACCO_Err.),
+				  ATTACCO_Murati = as.numeric(ATTACCO_Murati),
+				  ATTACCO_Prf. = as.numeric(ATTACCO_Prf.),
+				  `ATTACCO_Prf.%` = as.numeric(gsub(",", ".", def$`ATTACCO_Prf.%`)),
+				  ATTACCO_Effic. = as.numeric(gsub(",", ".", def$ATTACCO_Effic.)),
+				  MURO_Prf. = as.numeric(MURO_Prf.),
+				  MURO_PuntiperSet = as.numeric(gsub(",", ".", def$MURO_PuntiperSet))
+				  )
+)
+				  
+
 ## Save final data table
 save(def, file = "../data/season2016.rda")
 
