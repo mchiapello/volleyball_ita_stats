@@ -30,13 +30,9 @@ x <- do.call("rbind", y)
 # Giornata as factor
 x$Giornata <- factor(x$Giornata, levels = c(paste0(rep("Andata_", 13), 1:13), paste0(rep("Ritorno_", 13), 1:13)))
 
-# Save data
-save(x, file = "../data/season2016.rda")
-
-
 ####################### Downlod match results #####################
 
-## Girone di andata
+######### Girone di andata
 a <- list()
 
 ## URL giornata
@@ -59,7 +55,7 @@ for (i in 2:13){
 ## Rename colonne
 names(andata) <- c("team", paste0(rep("Andata_", 13), 1:13))
 
-## Girone di ritorno
+######## Girone di ritorno
 a <- list()
 
 ## URL giornata
@@ -90,4 +86,7 @@ final <- inner_join(andata, ritorno, by = "team")
 final <- final %>% gather(Giornata, risultato, -team)
 
 ## Combine stat and risultati
-left_join(x, final, by = c("team", "Giornata")) %>% head
+def <- left_join(x, final, by = c("team", "Giornata"))
+
+## Save final data table
+save(def, file = "../data/season2016.rda")
