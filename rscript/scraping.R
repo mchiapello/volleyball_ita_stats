@@ -94,6 +94,9 @@ final <- final %>% gather(Giornata, risultato, -team)
 
 ## Combine stat and risultati
 def <- left_join(x, final, by = c("team", "Giornata"))
+def$risultato <- as.numeric(def$risultato)
+def$vit <- def$risultato >= 3
 
+	
 ## Save final data table
 save(def, file = "../data/season2016.rda")
