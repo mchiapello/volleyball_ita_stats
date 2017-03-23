@@ -1,12 +1,42 @@
-Library
+#Library
 library(tidyverse)
+library("gplots")
+library(RColorBrewer)
 
 # Load data
 load("../data/season2016.rda")
 
-ggplot(data = def, aes(x = Giornata, y = vit, group = team)) + geom_line() + geom_point() + facet_wrap(~team) + coord_polar()
+####### Heatmap results
+# Create df
+final2 <- def %>% select(1,25,26) %>% spread(Giornata, risultato)
+# Transform it into matrix
+rownames(final2) <- final2$team
+final2$team <- NULL
+final2 <- as.matrix(final2)
+mode(final2) <- "numeric"
 
 
+my_palette <- colorRampPalette(c("#0046B2", "#F0E442" ))(n = 4)
+
+# Plot heatmap
+heatmap.2(final2, Colv = NULL, dendrogram = "row",
+		  main = "Cluster del numero\ndi set vinti",
+          lwid = c(0.7,4),
+          lhei = c(0.6,4.1),
+          notecol="black",
+          cellnote = final2,
+          notecex = 1.1,
+		  srtCol = 45,
+          offsetCol = 0.5,
+		  rowsep = 1:14,
+		  colsep = 1:26,
+		  sepcolor = "white",
+		  key = FALSE,
+		  trace = "none",
+		  margins = c(5,17),
+          cexRow = 1.1,
+          cexCol = 0.8,
+		  col=my_palette)
 
 
 # Plot MURO
@@ -44,3 +74,4 @@ x %>% group_by(team) %>% mutate(ma = mean(ATTACCO_Err.), cumE = cumsum(as.numeri
 	ylab("") + xlab("") + labs(title = "ATTACCHI ERRATI") + coord_polar() + facet_wrap(~team)
 
 
+ggplot(data = def, aes(x = Giornata, y = vit, group = team)) + geom_line() + geom_point() + facet_wrap(~team) + coord_polar()

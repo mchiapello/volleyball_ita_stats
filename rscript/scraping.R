@@ -88,7 +88,6 @@ ritorno$team[ritorno$team == "Biosì Indexa Sora"] <- "Biosi Indexa Sora"
 #########
 ## Combine datasets
 final <- inner_join(andata, ritorno, by = "team")
-final2 <- final
 
 ## Transform long table
 final <- final %>% gather(Giornata, risultato, -team)
@@ -134,12 +133,3 @@ def <- tbl_df(transform(def, SetGioc. = as.numeric(SetGioc.),
 
 ## Save final data table
 save(def, file = "../data/season2016.rda")
-
-
-
-
-rownames(final2) <- final2$team
-final2$team <- NULL
-final2 <- as.matrix(final2)
-mode(final2) <- "numeric"
-heatmap(final2, Rowv = NULL)
