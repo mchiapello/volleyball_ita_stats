@@ -6,7 +6,7 @@ library(tidyverse)
 ######################### season 2016 ############################
 ## Download data
 # Create a list of the teams
-list <- data.frame(name = c("Top Volley Latina", "Cucine Lube Civitanova", "Revivre Milano", "Gi Group Monza", "Azimut Modena", "Exprivia Molfetta", "Kioene Padova", "Sir Safety Conad Perugia", "LPR Piacenza", "Bunge Ravenna", "Biosì Indexa Sora", "Diatec Trentino", "Calzedonia Verona", "Tonno Callipo Calabria Vibo Valentia"), code = c("LT", "MC", "MI-POWER", "MIVER", "MO", "BAM", "PD", "BASTIA", "PC", "RAV-ROB", "FR-SORA", "TN-ITAS", "VRI", "VV"))
+list <- data.frame(name = c("Top Volley Latina", "Cucine Lube Civitanova", "Revivre Milano", "Gi Group Monza", "Azimut Modena", "Exprivia Molfetta", "Kioene Padova", "Sir Safety Conad Perugia", "LPR Piacenza", "Bunge Ravenna", "Biosi Indexa Sora", "Diatec Trentino", "Calzedonia Verona", "Tonno Callipo Calabria Vibo Valentia"), code = c("LT", "MC", "MI-POWER", "MIVER", "MO", "BAM", "PD", "BASTIA", "PC", "RAV-ROB", "FR-SORA", "TN-ITAS", "VRI", "VV"))
 
 # Download Squadre giornata per giornata
 y <- list()
@@ -55,6 +55,9 @@ for (i in 2:13){
 ## Rename colonne
 names(andata) <- c("team", paste0(rep("Andata_", 13), 1:13))
 
+## Change Biosi name
+andata$team[andata$team == "Biosì Indexa Sora"] <- "Biosi Indexa Sora"
+
 ######## Girone di ritorno
 a <- list()
 
@@ -71,12 +74,16 @@ for (i in 1:13){
 
 ## Combine list into df
 ritorno <- a[[1]]
+
 for (i in 2:13){
 	ritorno <- left_join(ritorno, a[[i]], by = "squadre")
 }
 
 ## Rename colonne
 names(ritorno) <- c("team", paste0(rep("Ritorno_", 13), 1:13))
+
+## Change Biosi name
+ritorno$team[ritorno$team == "Biosì Indexa Sora"] <- "Biosi Indexa Sora"
 
 #########
 ## Combine datasets
