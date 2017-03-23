@@ -88,6 +88,7 @@ ritorno$team[ritorno$team == "Biosì Indexa Sora"] <- "Biosi Indexa Sora"
 #########
 ## Combine datasets
 final <- inner_join(andata, ritorno, by = "team")
+final2 <- final
 
 ## Transform long table
 final <- final %>% gather(Giornata, risultato, -team)
@@ -96,7 +97,21 @@ final <- final %>% gather(Giornata, risultato, -team)
 def <- left_join(x, final, by = c("team", "Giornata"))
 def$risultato <- as.numeric(def$risultato)
 def$vit <- def$risultato >= 3
+def$vit[def$vit == FALSE]  <- 0
+def$vit[def$vit == TRUE]  <- 1
+def <- def %>% group_by(team) %>% mutate(cum = cumsum(vit))
 
+# Giornata as factor
+def$Giornata <- factor(def$Giornata, levels = c(paste0(rep("Andata_", 13), 1:13), paste0(rep("Ritorno_", 13), 1:13)))
 	
 ## Save final data table
 save(def, file = "../data/season2016.rda")
+
+
+
+
+rownames(final2) <- final2$team
+final2$team <- NULL
+final2 <- as.matrix(final2)
+mode(final2) <- "numeric"
+heatmap(final2, Rowv = NULL)
