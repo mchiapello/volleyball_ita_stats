@@ -163,22 +163,6 @@ for (i in 2:13){
 # Reorder
 andata <- andata[, c(1, seq(2, 26, 2), seq(3, 27, 2))]
 
-# Cumulative difference
-m <- matrix(rep(0, nrow(andata) * (ncol(andata)-1)), nrow = 14)
-for (i in 1:nrow(andata)){
-	m[i, 1:13] <- c(as.numeric(andata[i, 2:14])[1], diff(as.numeric(andata[i, 2:14])))
-	m[i, 14:26] <- c(as.numeric(andata[i, 15:27])[1], diff(as.numeric(andata[i, 15:27])))
-}
-
-# Rename columns
-colnames(m) <- c(paste0("DiffSet_andata_", 1:13), paste0("DiffPunti_andata_", 1:13))
-
-# Combine datasets
-andata <- cbind(andata, m)
-
-
-
-
 ######## Girone di ritorno
 a <- list()
 
@@ -194,10 +178,11 @@ for (i in 1:13){
 	a[[i]] <- a[[i]][, c(2, 4, 5)]
 	# Rename tables
 	names(a[[i]])[2:3] <- paste0(names(a[[i]])[2:3], "_ritorno_", i)
+	# Remove dot
 }
 
 ## Combine list into df
-ritorno <- a[[2]]
+ritorno <- a[[1]]
 for (i in 2:13){
 	ritorno <- left_join(ritorno, a[[i]], by = c("Club"))
 }
@@ -205,15 +190,37 @@ for (i in 2:13){
 # Reorder
 ritorno <- ritorno[, c(1, seq(2, 26, 2), seq(3, 27, 2))]
 
-# Cumulative difference
-m <- matrix(rep(0, nrow(ritorno) * (ncol(ritorno)-1)), nrow = 14)
+# Remove decimals
 for (i in 1:nrow(ritorno)){
-	m[i, 1:13] <- c(as.numeric(ritorno[i, 2:14])[1], diff(as.numeric(ritorno[i, 2:14])))
-	m[i, 14:26] <- c(as.numeric(ritorno[i, 15:27])[1], diff(as.numeric(ritorno[i, 15:27])))
+	for (ii in 15:ncol(ritorno)){
+		if (ritorno[i, ii] < 2){
+			ritorno[i, ii] <- ritorno[i, ii] * 1000
+		} else {
+			ritorno[i, ii] <- ritorno[i, ii]
+		}
+	}
+}
+
+
+###############################################################################
+# Combine Andata + Ritorno
+x <- inner_join(andata, ritorno, by = "Club")
+# Reorder
+x <- x[, c(1, 2:14, 28:40, 15:27, 41:53)]
+
+# Cumulative difference
+m <- matrix(rep(0, nrow(x) * (ncol(x)-1)), nrow = 14)
+for (i in 1:nrow(x)){
+	m[i, 1:26] <- c(as.numeric(x[i, 2:27])[1], diff(as.numeric(x[i, 2:27])))
+	m[i, 27:52] <- c(as.numeric(x[i, 28:53])[1], diff(as.numeric(x[i, 28:53])))
 }
 
 # Rename columns
-colnames(m) <- c(paste0("DiffSet_ritorno_", 1:13), paste0("DiffPunti_ritorno_", 1:13))
+colnames(m) <- c(paste0("DiffSet_andata_", 1:13), paste0("DiffSet_ritorno_", 1:13),
+				 paste0("DiffPunti_andata_", 1:13), paste0("DiffPunti_ritorno_", 1:13))
 
 # Combine datasets
-ritorno <- cbind(ritorno, m)
+x <- tbl_df(cbind(x, m))
+
+# Save stat per team
+save(x, file = "../data/stat_per_team.rda")
