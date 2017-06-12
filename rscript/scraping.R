@@ -133,3 +133,87 @@ def <- tbl_df(transform(def, SetGioc. = as.numeric(SetGioc.),
 
 ## Save final data table
 save(def, file = "../data/season2016.rda")
+
+###############################################################################
+## STATISTICS
+###############################################################################
+######### Girone di andata
+a <- list()
+
+## URL giornata
+sq <- 5837:5849
+
+## Download tabelle girone di andata
+for (i in 1:13){
+	y <- read_html(paste0("http://www.legavolley.it/Rendimento.asp?Tipo=1&Classifica=1.1&AnnoInizio=2016&AnnoFine=2016&Serie=1&Fase=1&Giornata=", sq[i]), encoding = "ISO-8859-1") %>% html_table(fill = TRUE)
+	# Extract the data table
+	a[[i]] <- y[[5]]
+	# Remove unused columns
+	a[[i]] <- a[[i]][, c(2, 4, 5)]
+	# Rename tables
+	names(a[[i]])[2:3] <- paste0(names(a[[i]])[2:3], "_andata_", i)
+}
+
+## Combine list into df
+andata <- a[[1]]
+for (i in 2:13){
+	andata <- left_join(andata, a[[i]], by = c("Club"))
+}
+
+# Reorder
+andata <- andata[, c(1, seq(2, 26, 2), seq(3, 27, 2))]
+
+# Cumulative difference
+m <- matrix(rep(0, nrow(andata) * (ncol(andata)-1)), nrow = 14)
+for (i in 1:nrow(andata)){
+	m[i, 1:13] <- c(as.numeric(andata[i, 2:14])[1], diff(as.numeric(andata[i, 2:14])))
+	m[i, 14:26] <- c(as.numeric(andata[i, 15:27])[1], diff(as.numeric(andata[i, 15:27])))
+}
+
+# Rename columns
+colnames(m) <- c(paste0("DiffSet_andata_", 1:13), paste0("DiffPunti_andata_", 1:13))
+
+# Combine datasets
+andata <- cbind(andata, m)
+
+
+
+
+######## Girone di ritorno
+a <- list()
+
+## URL giornata
+sq <- 5850:5862
+
+## Download tabelle girone di ritorno
+for (i in 1:13){
+	y <- read_html(paste0("http://www.legavolley.it/Rendimento.asp?Tipo=1&Classifica=1.1&AnnoInizio=2016&AnnoFine=2016&Serie=1&Fase=1&Giornata=", sq[i]), encoding = "ISO-8859-1") %>% html_table(fill = TRUE)
+	# Extract the data table
+	a[[i]] <- y[[5]]
+	# Remove unused columns
+	a[[i]] <- a[[i]][, c(2, 4, 5)]
+	# Rename tables
+	names(a[[i]])[2:3] <- paste0(names(a[[i]])[2:3], "_ritorno_", i)
+}
+
+## Combine list into df
+ritorno <- a[[2]]
+for (i in 2:13){
+	ritorno <- left_join(ritorno, a[[i]], by = c("Club"))
+}
+
+# Reorder
+ritorno <- ritorno[, c(1, seq(2, 26, 2), seq(3, 27, 2))]
+
+# Cumulative difference
+m <- matrix(rep(0, nrow(ritorno) * (ncol(ritorno)-1)), nrow = 14)
+for (i in 1:nrow(ritorno)){
+	m[i, 1:13] <- c(as.numeric(ritorno[i, 2:14])[1], diff(as.numeric(ritorno[i, 2:14])))
+	m[i, 14:26] <- c(as.numeric(ritorno[i, 15:27])[1], diff(as.numeric(ritorno[i, 15:27])))
+}
+
+# Rename columns
+colnames(m) <- c(paste0("DiffSet_ritorno_", 1:13), paste0("DiffPunti_ritorno_", 1:13))
+
+# Combine datasets
+ritorno <- cbind(ritorno, m)

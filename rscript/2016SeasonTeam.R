@@ -16,7 +16,6 @@ final2$team <- NULL
 final2 <- as.matrix(final2)
 mode(final2) <- "numeric"
 
-
 my_palette <- colorRampPalette(c("#0046B2", "#F0E442" ))(n = 4)
 
 # Plot heatmap
@@ -47,7 +46,6 @@ final2 <- def %>% select(1,25,3) %>% spread(Giornata, PUNTI_Tot)
 rownames(final2) <- final2$team
 final2$team <- NULL
 final2 <- as.matrix(final2)
-
 
 my_palette <- colorRampPalette(c("#0046B2", "#F0E442" ))(n = 299)
 
@@ -199,4 +197,4 @@ x %>% group_by(team) %>% mutate(ma = mean(ATTACCO_Err.), cumE = cumsum(as.numeri
 	ylab("") + xlab("") + labs(title = "ATTACCHI ERRATI") + coord_polar() + facet_wrap(~team)
 
 
-ggplot(data = def, aes(x = Giornata, y = vit, group = team)) + geom_line() + geom_point() + facet_wrap(~team) + coord_polar()
+ggplot(data = def, aes(x = Giornata, y = vit, group = team)) + theme(axis.text.y = element_blank(), axis.text.x = element_blank(), legend.position = "none", axis.ticks.y = element_blank(), panel.grid.major = element_blank(), plot.title = element_text(hjust=0.5, size = 15)) + ylim(-.7,1) + geom_line() + geom_point() + facet_wrap(~team) + coord_polar()
