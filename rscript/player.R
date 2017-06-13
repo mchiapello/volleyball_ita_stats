@@ -18,5 +18,15 @@ oo <- final2 %>% filter(grepl("DiffPunti_", giornata)) %>% print(n = 100)
 
 oo <- oo %>% filter(Atleta %in% c("Sabbi Giulio", "Vettori Luca", "Juantorena Osmany"))
 oo$giornata <- factor(oo$giornata, levels = unique(oo$giornata))
-ggplot(data = oo, aes(x = giornata, y = values, group = Atleta, colour = Atleta)) + geom_point(alpha = .5) + geom_line(alpha = .5) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5, size = 7)) + geom_smooth(method = "loess", se = FALSE) + coord_polar()
+ggplot(data = oo, aes(x = giornata, y = values, group = Atleta, colour = Atleta)) + geom_point(alpha = .5) + geom_line(alpha = .3) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5, size = 7)) + geom_smooth(method = "loess", se = FALSE)
+
+oo <- oo %>% filter(Atleta %in% c("Sabbi Giulio", "Hernandez Ramos Fernando", "Miskevich Radzivon"))
+oo$giornata <- factor(oo$giornata, levels = unique(oo$giornata))
+ggplot(data = oo, aes(x = giornata, y = values, group = Atleta, colour = Atleta)) + geom_point(alpha = .5) + geom_line(alpha = .3) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5, size = 7)) + geom_smooth(method = "loess", se = FALSE)
+
+oo <- final2 %>% filter(grepl("^Punti_", giornata)) %>% print(n = 100)
+
+oo <- oo %>% filter(Atleta %in% c("Sabbi Giulio", "Hernandez Ramos Fernando", "Miskevich Radzivon"))
+oo$giornata <- factor(oo$giornata, levels = unique(oo$giornata))
+ggplot(data = oo, aes(x = giornata, y = values, group = Atleta, colour = Atleta)) + geom_point(alpha = .5) + geom_line(alpha = .3) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5, size = 7))
 
