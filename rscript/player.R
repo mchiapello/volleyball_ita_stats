@@ -5,7 +5,7 @@ library(RColorBrewer)
 library(ggdendro)
 
 # Load data
-load("../data/stat_per_player_att.rda")
+load("../data/stat_per_player_tot.rda")
 
 ####### Heatmap results
 # Create df
